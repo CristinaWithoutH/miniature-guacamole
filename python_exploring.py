@@ -55,4 +55,3 @@ with open('writers_results.csv', 'w', encoding = 'utf-8') as file:
         file.write(f'{author}, {writers_dict[author]['birth_year']}, {writers_dict[author]['genre']}, {writers_dict[author]['nationality']} \n')
 =======
 # print(genre_count)
->>>>>>> 48b989d087379fe66f550aba651370fbf4d2e282
