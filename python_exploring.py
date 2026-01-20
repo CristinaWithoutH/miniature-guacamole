@@ -3,16 +3,11 @@ import json
 from collections import Counter
 
 # open data
-<<<<<<< HEAD
-with open('data\A_people.json') as file:
-    persons = json.load(file)
-=======
 writers_dict = {}  
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 for letter in letters:
     with open(f'data\{letter}_people.json') as file:
         persons = json.load(file)
->>>>>>> 48b989d087379fe66f550aba651370fbf4d2e282
 
 # make dictionary with key: Name, value: dict(Year, Genre, Nationality) each row is 1 person  # genre: ontology/genre_label
         for person in persons:      # loop through people who have all the data we need
@@ -35,23 +30,23 @@ for letter in letters:
         json.dump(writers_dict, file, indent = 4)
 
 # counting how many instances of each genre we have right now
-# genre_count = Counter()
-# for writer in writers_dict:
-#     writer_info = writers_dict[writer]
-#     genre_list = writer_info["genre"]
-#     for genre in genre_list:
-#         if genre not in genre_count:
-#             genre_count[genre] = 1
-#         else:
-#             genre_count[genre] += 1
-
-<<<<<<< HEAD
+genre_count = Counter()
+for writer in writers_dict:
+    writer_info = writers_dict[writer]
+    genre_list = writer_info["genre"]
+    for genre in genre_list:
+        if genre not in genre_count:
+            genre_count[genre] = 1
+        else:
+            genre_count[genre] += 1
 print(genre_count)
+
+# Calculate the relative choice popularity
+# total_genre_occurence = 0
+
 
 # Writing to CSV file
 with open('writers_results.csv', 'w', encoding = 'utf-8') as file:
-    file.write('name, birth_year, genre_list, nationality \n')
+    file.write('name, birth_year, genre_list\n')
     for author in writers_dict:
-        file.write(f'{author}, {writers_dict[author]['birth_year']}, {writers_dict[author]['genre']}, {writers_dict[author]['nationality']} \n')
-=======
-# print(genre_count)
+        file.write(f'{author}, {writers_dict[author]['birth_year']}, {writers_dict[author]['genre']}\n')
