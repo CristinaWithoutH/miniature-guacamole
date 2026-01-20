@@ -4,7 +4,8 @@ from collections import Counter
 
 # make dictionary with key: Name, value: dict(Year, Genre)   
 writers_dict = {}           # initialize
-person_count = 0
+observations_count = 0
+duplicates = 0
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 for letter in letters:
     with open(f'data\{letter}_people.json') as file:
@@ -38,24 +39,29 @@ for letter in letters:
 
             # start actual loop if all conditions met
             if has_genre == True and has_birthyear == True and is_writer == True and type(birth_year) is str:    # check type of birthyear bc there's one item with a list
-                name = person["title"]                                # define variables for clarity
+                name = person["title"].replace(",", " ")                 # define variables for clarity, remove comma bc some people have a comma in name
                 genre = person["ontology/genre_label"]                 # this is a list for some people, and a string for others
                 birth_year = int(birth_year)
                 if 1900 <= birth_year <= 2000:                         # filter for 20th century authors
-                    person_count += 1
                     if type(genre) is list:                              # if it's a string, add the writer separately for each genre
                         for one_genre in genre:
-                            writers_dict[f"{name} {one_genre}"] = {
-                                "birth_year": birth_year,      
-                                "genre": one_genre 
+                            if one_genre == "Fantasy"  or one_genre == "Poetry" or one_genre == "Satire" or one_genre == "Science fiction" or one_genre == "Observational comedy" or one_genre == "Non-fiction" or one_genre == "Romance novel":
+                                writers_dict[f"{name} {one_genre}"] = {
+                                    "birth_year": birth_year,      
+                                    "genre": one_genre 
                                 }
+                                observations_count += 1
+                                duplicates += 1
                     else:                                                # if it's a string, just add the writer once
-                        writers_dict[name] = {
-                            "birth_year": birth_year,      
-                            "genre": genre  
-                        }
+                        if genre == "Fantasy"  or genre == "Poetry" or genre == "Satire" or genre == "Science fiction" or genre == "Observational comedy" or genre == "Non-fiction" or genre == "Romance novel":
+                            writers_dict[name] = {
+                                "birth_year": birth_year,      
+                                "genre": genre  
+                            }
+                            observations_count += 1
 
-print(person_count)
+print(observations_count)
+print(duplicates)
 
 # Writing to CSV file
 with open('writers_results.csv', 'w', encoding = 'utf-8') as file:
