@@ -4,7 +4,7 @@ import json
 from collections import Counter
 
 # open data
-with open('data\People\A_people.json') as file:
+with open('data\A_people.json') as file:
     persons = json.load(file)
 
 # make dictionary with key: Name, value: dict(Year, Genre, Nationality) each row is 1 person  # genre: ontology/genre_label
@@ -40,4 +40,9 @@ for writer in writers_dict:
             genre_count[genre] += 1
 
 print(genre_count)
-    
+
+# Writing to CSV file
+with open('writers_results.csv', 'w', encoding = 'utf-8') as file:
+    file.write('name, birth_year, genre_list, nationality \n')
+    for author in writers_dict:
+        file.write(f'{author}, {writers_dict[author]['birth_year']}, {writers_dict[author]['genre']}, {writers_dict[author]['nationality']} \n')
