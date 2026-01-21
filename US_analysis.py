@@ -1,0 +1,148 @@
+# import packages
+import json
+from collections import Counter
+
+# 1. initialize: writersdict will be a dictionary with key: Name, value: dict(Year, Genre)   
+writers_dict = {}           # initialize
+observations_count = 0      # count how many observations including
+duplicates = 0              # duplicate people because each person is counted for each of their genres
+
+# 2. letter loop to go through all files
+letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+for letter in letters:
+
+    # open data
+    with open(f'data\{letter}_people.json') as file:
+        persons = json.load(file)
+
+        # 3. loop through each person
+        for person in persons:     
+
+            # 3.1 check if person has genre, birthyear, is writer, is US American
+
+            # 3.11 check if person has US as nationality (stored in 3 keys, value may be list or string)
+            is_american = False
+            if "ontology/nationality_label" in person:                                      # if nationality listed in nationality
+                if type(person["ontology/nationality_label"]) is str:
+                    if "united states" == person["ontology/nationality_label"].lower():
+                        is_american = True
+                elif type(person["ontology/nationality_label"]) is list:
+                    for string in person["ontology/nationality_label"]:
+                        if "united states" in string.lower():
+                            is_american = True
+            elif "http://purl.org/dc/elements/1.1/description" in person:                   # if nationality listed in description
+                if type(person["http://purl.org/dc/elements/1.1/description" ]) is str:
+                    if "american" in person["http://purl.org/dc/elements/1.1/description"].lower():
+                        is_american = True
+                elif type(person["http://purl.org/dc/elements/1.1/description"]) is list:
+                    for string in person["http://purl.org/dc/elements/1.1/description"]:
+                        if "american" in string.lower():
+                            is_american = True
+            elif "ontology/birthPlace_label" in person:                                     # if birthplace is US
+                if type(person["ontology/birthPlace_label"]) is str:
+                    if "united states" in person["ontology/birthPlace_label"].lower():
+                        is_american = True
+                if type(person["ontology/birthPlace_label"]) is list:
+                    for string in person["ontology/birthPlace_label"]:
+                        if "united states" in string.lower():
+                            is_american = True
+
+            # 3.12 check if we have information on their genre(s). poetry is a special case bc often in job description, not genre
+            has_genre = False
+            append_poetry = False   # extra check for poets!
+            if "ontology/genre_label" in person:
+                has_genre = True
+            elif "http://purl.org/dc/elements/1.1/description" in person:
+                if "Poet" in person["http://purl.org/dc/elements/1.1/description"]:       # if poetry listed in description
+                    has_genre = True
+                    append_poetry = True
+                elif "ontology/occupation_label" in person:                               # if poetry listed in occupation
+                    if "Poet" in person["ontology/occupation_label"]:
+                        has_genre = True
+                        append_poetry = True
+            
+            # 3.13 check birthyear. may be in birthyear or in birthdate key.
+            has_birthyear = False
+            if "ontology/birthYear" in person:                            # if in birthYear key
+                birth_year = person["ontology/birthYear"]  
+                if type(birth_year) is str and birth_year != '':          # almost always a string, exclude if empty
+                    has_birthyear = True
+            elif "ontology/birthDate" in person:                          # if no birthYear, check birthDate key
+                if type(person["ontology/birthDate"]) is str:         # date is in format 1990-11-14 (almost always a string)
+                    date = person["ontology/birthDate"].split("-")
+                    birth_year = date[0]
+                    if type(date[0]) is str and birth_year != '':          # exclude if empty   
+                        has_birthyear = True                                          
+
+            # 3.14 check if person is writer. could be saved in different names or keys
+            is_writer = False      
+            if "http://www.w3.org/1999/02/22-rdf-syntax-ns#type_label" in person:
+                for item in person["http://www.w3.org/1999/02/22-rdf-syntax-ns#type_label"]:
+                    if "author" in item.lower() or "writer" in item.lower() or "novelist" in item.lower() or "poet" in item.lower():
+                        is_writer = True
+            if "http://purl.org/dc/elements/1.1/description" in person:
+                if type(person["http://purl.org/dc/elements/1.1/description"]) is str:     # almost always a string
+                    if "author" in person["http://purl.org/dc/elements/1.1/description"].lower() or "writer" in person["http://purl.org/dc/elements/1.1/description"].lower() or "novelist" in person["http://purl.org/dc/elements/1.1/description"].lower() or "poet" in person["http://purl.org/dc/elements/1.1/description"].lower():
+                        is_writer = True
+            if "ontology/occupation_label" in person:                                     # may be a string or list
+                if type(person["ontology/occupation_label"]) is list:
+                    for item in person["ontology/occupation_label"]:
+                        if "author" in item.lower() or "writer" in item.lower() or "novelist" in item.lower() or "poet" in item.lower():
+                            is_writer = True
+                elif type(person["ontology/occupation_label"]) is str:
+                    if "author" in person["ontology/occupation_label"].lower() or "writer" in person["ontology/occupation_label"].lower() or "novelist" in person["ontology/occupation_label"].lower() or "poet" in person["ontology/occupation_label"].lower():
+                        is_writer = True
+
+            # 3.2 loop through genres if all conditions met
+            if is_american == True and has_genre == True and has_birthyear == True and is_writer == True:    
+                
+                # 3.21 define variables
+                name = person["title"].replace(",", " ")          # remove comma bc some people have a comma in name
+                if "ontology/genre_label" in person:              # genre depends on poetry or not
+                    genre = person["ontology/genre_label"]        # this is a list for some people, and a string for others
+                    if append_poetry == True:                     # append poetry if it's a poet!
+                        genre.append("Poetry")
+                else:
+                    genre = "Poetry"
+                birth_year = int(birth_year)                      # make birthyear integer for comparisons
+
+                # 3.22 in the time span, loop through person's genres and person for each of their genres and add to dictionary
+                if 1900 <= birth_year <= 2000:                     # filter for 20th century authors
+                    if type(genre) is list:                        # if the writer has several genres, add once for each
+                        for one_genre in genre:
+                            if "music" not in one_genre:           
+                                writers_dict[f"{name} {one_genre}"] = { 
+                                    "birth_year": birth_year,      
+                                    "genre": one_genre 
+                                }
+                            observations_count += 1
+                            duplicates += 1                   # count duplicates if including the writer multiple times (overcounting each writer by 1)
+                    else:                                     # if the writer has 1 genre, add only once
+                        if "music" not in genre:
+                            writers_dict[name] = {
+                                "birth_year": birth_year,      
+                                "genre": genre  
+                            }
+                            observations_count += 1
+
+print(observations_count)
+print(duplicates)          
+
+# 4. Write to CSV file
+with open('american_writers_results.csv', 'w', encoding = 'utf-8') as file:
+    file.write('name, birth_year, genre\n')
+    for name in writers_dict:
+        file.write(f'{name}, {writers_dict[name]["birth_year"]}, {writers_dict[name]["genre"]}\n')
+
+# 5. Count how many instances of each genre we have right now
+genre_count = Counter()
+for writer in writers_dict:
+    writer_info = writers_dict[writer]
+    genre = writer_info["genre"]
+    if genre not in genre_count:
+        genre_count[genre] = 1
+    else:
+        genre_count[genre] += 1
+
+print(genre_count)
+
