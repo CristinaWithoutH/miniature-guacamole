@@ -29,6 +29,12 @@ for line in yearly_genres:
         }
     year_dict[year][genre] += 1
 
+# Writing to csv file (absolute values)
+with open('yearly_genres_absolute.csv', 'w', encoding = 'utf-8') as file:
+    file.write('year, fantasy, science_fiction, poetry, satire, observational_comedy, non_fiction, romance_novel \n')
+    for year in year_dict:
+        file.write(f'{year}, {year_dict[year]['Fantasy']}, {year_dict[year]['Science fiction']}, {year_dict[year]['Poetry']}, {year_dict[year]['Satire']}, {year_dict[year]['Observational comedy']}, {year_dict[year]['Non-fiction']}, {year_dict[year]['Romance novel']}\n')
+
 # relative choice occurence values
 yearly_relative_dict = {}
 for year in year_dict:
@@ -51,8 +57,8 @@ for year in year_dict:
         yearly_relative_dict[year][genre] = relative_genre
 print(yearly_relative_dict)
 
-# Writing to CSV file
-with open('yearly_genres.csv', 'w', encoding = 'utf-8') as file:
+# Writing to CSV file (relative files)
+with open('yearly_genres_relative.csv', 'w', encoding = 'utf-8') as file:
     file.write('year, fantasy, science_fiction, poetry, satire, observational_comedy, non_fiction, romance_novel \n')
     for year in yearly_relative_dict:
         file.write(f'{year}, {yearly_relative_dict[year]['Fantasy']}, {yearly_relative_dict[year]['Science fiction']}, {yearly_relative_dict[year]['Poetry']}, {yearly_relative_dict[year]['Satire']}, {yearly_relative_dict[year]['Observational comedy']}, {yearly_relative_dict[year]['Non-fiction']}, {yearly_relative_dict[year]['Romance novel']}\n')
