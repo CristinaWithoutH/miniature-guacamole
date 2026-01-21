@@ -64,13 +64,15 @@ for letter in letters:
             # 3.13 check birthyear. may be in birthyear or in birthdate key.
             has_birthyear = False
             if "ontology/birthYear" in person:                            # if in birthYear key
-                has_birthyear = True
-                birth_year = person["ontology/birthYear"]                  
-            elif "ontology/birthDate" in person:                          # if no birthYear, check birthDate key
-                if type(person["ontology/birthDate"]) is str:   # date is in format 1990-11-14 (almost always a string)
+                birth_year = person["ontology/birthYear"]  
+                if type(birth_year) is str and birth_year != '':          # almost always a string, exclude if empty
                     has_birthyear = True
+            elif "ontology/birthDate" in person:                          # if no birthYear, check birthDate key
+                if type(person["ontology/birthDate"]) is str:         # date is in format 1990-11-14 (almost always a string)
                     date = person["ontology/birthDate"].split("-")
-                    birth_year = date[0]                                        
+                    birth_year = date[0]
+                    if type(date[0]) is str and birth_year != '':          # exclude if empty   
+                        has_birthyear = True                                          
 
             # 3.14 check if person is writer. could be saved in different names or keys
             is_writer = False      
