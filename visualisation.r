@@ -31,9 +31,11 @@ ggplot(data = relative_pivoted) +
 ggsave("Relative occurrence by genre by gen.pdf", width = 10, height = 6)
 
 # Visualization: line plot for absolute occurence 
-ggplot(data = absolute_pivoted) +
+no_millenials = filter(absolute_pivoted, (year < 1981))
+
+ggplot(data = no_millenials) +
   aes(x = year, y = value, color = genre) +
-  labs(title = "Absolute occurrence of genres by generation of the author",
+  labs(title = "Linear regression of absolute genre occurrence by generation of the author",
       x = "Year of birth", 
       y = "Absolute occurrence", 
       color = "Genre") +
@@ -43,13 +45,10 @@ ggplot(data = absolute_pivoted) +
   geom_vline(xintercept = 1945, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1964, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1980, linetype = "dashed", color = 'grey50') +
-  geom_vline(xintercept = 1996, linetype = "dashed", color = 'grey50') +
   annotate("text", x = 1912, y = 15, label = "Greatest Gen.\n ('01-'27)") +
   annotate("text", x = 1936, y = 15, label = "Silent Gen.\n ('28-'45)") +
   annotate("text", x = 1954, y = 15, label = "Baby \n Boomers\n ('46-'64)") +
   annotate("text", x = 1972, y = 15, label = "Gen. X\n ('65-'80)") +
-  annotate("text", x = 1988, y = 15, label = "Millenials\n ('81-'96)") +
   geom_point(alpha = 0.3) +
-  geom_smooth(se = FALSE)
-  # geom_smooth(method = "lm", se = FALSE)
-ggsave("Relative occurrence by genre by gen.pdf", width = 10, height = 6)
+  geom_smooth(method='lm', se = FALSE)
+ggsave("Absolute occurrence by genre by gen (no millenials, linear regression).pdf", width = 10, height = 6)
