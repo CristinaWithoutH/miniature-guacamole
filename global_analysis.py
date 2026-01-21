@@ -23,20 +23,20 @@ def parse_genre(genre_label):
     elif "poetry" in genre:
         return "poetry"
     elif "science fiction" in genre:
-        return "science fiction"
+        return "science_fiction"
     elif "romance" in genre:
         return "romance"
     elif "children" in genre:
-        return "children's literature"
+        return "childrens_literature"
     elif "crime" in genre or "thriller" in genre or "horror fiction" in genre:
         return "scary"
     elif "young-adult" in genre or "adolenscence" in genre or "young_adult" in genre:
-        return "young-adult"
+        return "young_adult"
     elif "non-fiction" in genre or "memoir" in genre or "autobiography" in genre or "biography" in genre or "essay" in genre or "humorous_Non_Fiction" in genre:
-        return "non-fiction"
+        return "non_fiction"
     else:
         return "other"
-
+    
 # 3. letter loop to go through all files
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 for letter in letters:
@@ -48,36 +48,9 @@ for letter in letters:
         # 3. loop through each person
         for person in persons:     
 
-            # 3.1 check if person has genre, birthyear, is writer, is US American
+            # 3.1 check if person has genre, birthyear, is writer
 
-            # 3.11 check if person has US as nationality (stored in 3 keys, value may be list or string)
-            is_american = False
-            if "ontology/nationality_label" in person:                                      # if nationality listed in nationality
-                if type(person["ontology/nationality_label"]) is str:
-                    if "united states" == person["ontology/nationality_label"].lower():
-                        is_american = True
-                elif type(person["ontology/nationality_label"]) is list:
-                    for string in person["ontology/nationality_label"]:
-                        if "united states" in string.lower():
-                            is_american = True
-            elif "http://purl.org/dc/elements/1.1/description" in person:                   # if nationality listed in description
-                if type(person["http://purl.org/dc/elements/1.1/description" ]) is str:
-                    if "american" in person["http://purl.org/dc/elements/1.1/description"].lower():
-                        is_american = True
-                elif type(person["http://purl.org/dc/elements/1.1/description"]) is list:
-                    for string in person["http://purl.org/dc/elements/1.1/description"]:
-                        if "american" in string.lower():
-                            is_american = True
-            elif "ontology/birthPlace_label" in person:                                     # if birthplace is US
-                if type(person["ontology/birthPlace_label"]) is str:
-                    if "united states" in person["ontology/birthPlace_label"].lower():
-                        is_american = True
-                if type(person["ontology/birthPlace_label"]) is list:
-                    for string in person["ontology/birthPlace_label"]:
-                        if "united states" in string.lower():
-                            is_american = True
-
-            # 3.12 check if we have information on their genre(s). poetry is a special case bc often in job description, not genre
+            # 3.11 check if we have information on their genre(s). poetry is a special case bc often in job description, not genre
             has_genre = False
             append_poetry = False   # extra check for poets!
             if "ontology/genre_label" in person:
@@ -91,7 +64,8 @@ for letter in letters:
                         has_genre = True
                         append_poetry = True
             
-            # 3.13 check birthyear. may be in birthyear or in birthdate key.
+            
+            # 3.12 check birthyear. may be in birthyear or in birthdate key.
             has_birthyear = False
             if "ontology/birthYear" in person:                            # if in birthYear key
                 birth_year = person["ontology/birthYear"]  
@@ -102,9 +76,9 @@ for letter in letters:
                     date = person["ontology/birthDate"].split("-")
                     birth_year = date[0]
                     if type(date[0]) is str and birth_year != '':          # exclude if empty   
-                        has_birthyear = True                                          
+                        has_birthyear = True                                 
 
-            # 3.14 check if person is writer. could be saved in different names or keys
+            # 3.13 check if person is writer. could be saved in different names or keys
             is_writer = False      
             if "http://www.w3.org/1999/02/22-rdf-syntax-ns#type_label" in person:
                 for item in person["http://www.w3.org/1999/02/22-rdf-syntax-ns#type_label"]:
@@ -124,8 +98,8 @@ for letter in letters:
                         is_writer = True
 
             # 3.2 loop through genres if all conditions met
-            if is_american == True and has_genre == True and has_birthyear == True and is_writer == True:    
-                
+            if has_genre == True and has_birthyear == True and is_writer == True:    # check type of birthyear bc there's one item with a list 
+
                 # 3.21 define variables
                 name = person["title"].replace(",", " ")          # remove comma bc some people have a comma in name
                 if "ontology/genre_label" in person:              # genre depends on poetry or not
@@ -144,12 +118,11 @@ for letter in letters:
                                     "genre": one_genre  
                                 }
                         observations_count += 1
-
 #print(observations_count)
-#print(duplicates)          
+#print(duplicates)
 
 # 4. Write to CSV file
-with open('american_writers_results.csv', 'w', encoding = 'utf-8') as file:
+with open('writers_results.csv', 'w', encoding = 'utf-8') as file:
     file.write('name, birth_year, genre\n')
     for name in writers_dict:
         file.write(f'{name}, {writers_dict[name]["birth_year"]}, {writers_dict[name]["genre"]}\n')
