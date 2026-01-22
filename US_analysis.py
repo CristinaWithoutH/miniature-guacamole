@@ -23,17 +23,17 @@ def parse_genre(genre_label):
     elif "poetry" in genre:
         return "poetry"
     elif "science fiction" in genre:
-        return "science fiction"
+        return "science_fiction"
     elif "romance" in genre:
         return "romance"
     elif "children" in genre:
-        return "children's literature"
+        return "childrens_literature"
     elif "crime" in genre or "thriller" in genre or "horror fiction" in genre:
         return "scary"
     elif "young-adult" in genre or "adolenscence" in genre or "young_adult" in genre:
-        return "young-adult"
+        return "young_adult"
     elif "non-fiction" in genre or "memoir" in genre or "autobiography" in genre or "biography" in genre or "essay" in genre or "humorous_Non_Fiction" in genre:
-        return "non-fiction"
+        return "non_fiction"
     else:
         return "other"
 
