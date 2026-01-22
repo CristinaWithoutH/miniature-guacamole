@@ -21,17 +21,16 @@ category <- function(year) {
 }
 
 # Generation grouping + Pivot longer for relative and absolute
-global_data_absolute <- pivot_longer(global_data, c("fantasy", "science_fiction", "poetry", "romance", "non_fiction", "history", "mystery", "horror_thriller", "young_adult", "childrens_literature"), names_to = "genre")
+global_data_absolute <- pivot_longer(global_data, c("childrens_literature", "fantasy", "horror_thriller", "science_fiction", "young_adult"), names_to = "genre")
 
 global_data_relative <- global_data |>
   mutate(generation = sapply(year, category)) |>
-  pivot_longer(c("fantasy", "science_fiction", "poetry", "romance", "non_fiction", "history", "mystery", "horror_thriller", "young_adult", "childrens_literature"), names_to = "genre", values_to = 'absolute_frequency') |>
+  pivot_longer(c("childrens_literature", "fantasy", "horror_thriller", "science_fiction", "young_adult"), names_to = "genre", values_to = 'absolute_frequency') |>
   filter(generation != 'no info') |>
   group_by(generation) |>
   mutate(total_observations = sum(absolute_frequency)) |>
   group_by(generation, genre) |>
   mutate(relative_frequency = sum(absolute_frequency)/total_observations)
-print(global_data_relative, n = 50)
 
 # Visualization: bar plot for relative occurrence
 ggplot(data = global_data_relative) +
@@ -39,11 +38,12 @@ ggplot(data = global_data_relative) +
   labs(title = "Relative genre occurrence by generation of the author",
       x = "Generation",
       y = "Average occurrence", 
-      fill = "Genre") +
-  #scale_fill_discrete(labels = c("Fantasy", "Science fiction", "Poetry", "Romance", "Non-fiction", "History", "Mystery", "Horror/Thriller", "Young adult", "Children's literature")) +
+      fill = "Genre"
+    ) +
+  scale_fill_discrete(labels = c("Children's literature", "Fantasy", "Horror / Thriller", "Science fiction", "Young adult")) +
   scale_x_discrete(limits = c("Greatest gen.", "Silent gen.", "Baby boomer", "Gen. X", "Millennial"), labels = c("Greatest gen.\n(1901-1927)", "Silent gen.\n(1928-1945)", "Baby boomer\n(1946-1964)", "Gen. X\n(1965-1980)", "Millennial(1981-1996)"))+                  # changing order of bar groups
   theme_light() +
-  geom_col(width = 0.7, position = "dodge")
+  geom_col(width = 0.7, position = "dodge", colour = 'black')
 ggsave("Relative occurrence of genre per generation.pdf", width = 10, height = 6)
 
 # Visualization: line plot for absolute occurrence 
@@ -56,7 +56,7 @@ ggplot(data = global_data_absolute_no_millenials) +
       y = "Absolute occurrence", 
       color = "Genre",) +
   theme_light() +
-  #scale_colour_discrete(labels = c("Fantasy", "Science fiction", "Poetry", "Romance", "Non-fiction", "History", "Mystery", "Horror/Thriller", "Young adult", "Children's literature")) +
+  scale_colour_discrete(labels = c("Children's literature", "Fantasy", "Horror / Thriller", "Science fiction", "Young adult")) +
   geom_vline(xintercept = 1927, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1945, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1964, linetype = "dashed", color = 'grey50') +

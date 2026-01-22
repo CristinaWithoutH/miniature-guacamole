@@ -20,9 +20,9 @@ def parse_genre(genre_label):
         return "fantasy"
     elif "science fiction" in genre:
         return "science_fiction"
-    elif "children" in genre or "children's" in genre:
+    elif "children's literature" in genre or "children's_Fiction" in genre:
         return "childrens_literature"
-    elif "young-adult" in genre or "adolenscence" in genre or "young_adult" in genre:
+    elif "young-adult" in genre or "adolenscence" in genre or "young_adult" in genre or "young adult" in genre:
         return "young_adult"
     elif "horror" in genre or "thriller" in genre:
         return "horror_thriller"
