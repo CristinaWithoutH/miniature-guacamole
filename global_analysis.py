@@ -16,24 +16,14 @@ def parse_genres(genre_labels):
 
 def parse_genre(genre_label):
     genre = genre_label.lower()
-    if "history" in genre:
-        return "history"
-    elif "fantasy" in genre:
+    if "fantasy" in genre:
         return "fantasy"
-    elif "poetry" in genre:
-        return "poetry"
     elif "science fiction" in genre:
         return "science_fiction"
-    elif "romance" in genre:
-        return "romance"
     elif "children" in genre or "children's" in genre:
         return "childrens_literature"
     elif "young-adult" in genre or "adolenscence" in genre or "young_adult" in genre:
         return "young_adult"
-    elif "non-fiction" in genre or "memoir" in genre or "autobiography" in genre or "biography" in genre or "essay" in genre or "humorous_Non_Fiction" in genre:
-        return "non_fiction"
-    elif "mystery" in genre or "crime" in genre or "detective" in genre:
-        return "mystery"
     elif "horror" in genre or "thriller" in genre:
         return "horror_thriller"
     else:
@@ -124,7 +114,7 @@ for letter in letters:
 #print(duplicates)
 
 # 4. Write to CSV file
-with open('writers_results.csv', 'w', encoding = 'utf-8') as file:
+with open('global_writers_results.csv', 'w', encoding = 'utf-8') as file:
     file.write('name, birth_year, genre\n')
     for name in writers_dict:
         file.write(f'{name}, {writers_dict[name]["birth_year"]}, {writers_dict[name]["genre"]}\n')
