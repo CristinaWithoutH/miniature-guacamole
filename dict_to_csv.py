@@ -6,7 +6,7 @@ import json
 from collections import Counter
 
 # load csv data file
-with open("american_writers_results.csv", encoding = "utf-8") as file:
+with open("writers_results.csv", encoding = "utf-8") as file:
     headers = file.readline()
     yearly_genres = file.readlines()
 
@@ -22,21 +22,22 @@ for line in yearly_genres:
             'fantasy' : 0,
             'science_fiction' : 0,
             'poetry' : 0,
-            'childrens_literature' : 0,
-            'scary' : 0,
-            'non_fiction' : 0,
             'romance' : 0,
+            'non_fiction' : 0,
             'history' : 0,
+            'mystery' : 0,
+            'horror_thriller' : 0,
             'young_adult' : 0,
+            'childrens_literature' : 0,
             'other' : 0
         }
     year_dict[year][genre] += 1
 
 # Writing to csv file (absolute values)
-with open('american_yearly_genres_absolute.csv', 'w', encoding = 'utf-8') as file:
-    file.write('year, fantasy, science_fiction, poetry, childrens_literature, scary, non_fiction, romance, history, young_adult \n')
+with open('global_yearly_genres_absolute.csv', 'w', encoding = 'utf-8') as file:
+    file.write('year, fantasy, science_fiction, poetry, romance, non_fiction, history, mystery, horror_thriller, young_adult, childrens_literature \n')
     for year in year_dict:    
-        file.write(f'{year}, {year_dict[year]["fantasy"]}, {year_dict[year]["science_fiction"]}, {year_dict[year]["poetry"]}, {year_dict[year]["childrens_literature"]}, {year_dict[year]["scary"]}, {year_dict[year]["non_fiction"]}, {year_dict[year]["romance"]}, {year_dict[year]["history"]}, {year_dict[year]["young_adult"]} \n')
+        file.write(f'{year}, {year_dict[year]["fantasy"]}, {year_dict[year]["science_fiction"]}, {year_dict[year]["poetry"]}, {year_dict[year]["romance"]}, {year_dict[year]["non_fiction"]}, {year_dict[year]["history"]}, {year_dict[year]["mystery"]}, {year_dict[year]["horror_thriller"]}, {year_dict[year]["young_adult"]}, {year_dict[year]["childrens_literature"]} \n')
 
 # relative choice occurence values
 yearly_relative_dict = {}
@@ -46,24 +47,26 @@ for year in year_dict:
     for genre in current_year_dict:
         count_yearly += current_year_dict[genre]
     if year not in yearly_relative_dict:
-            yearly_relative_dict[year] = {
-                'fantasy' : 0,
-                'science_fiction' : 0,
-                'poetry' : 0,
-                'childrens_literature' : 0,
-                'scary' : 0,
-                'non_fiction' : 0,
-                'romance' : 0,
-                'history' : 0,
-                'young_adult' : 0
-            }
+        yearly_relative_dict[year] = {
+            'fantasy' : 0,
+            'science_fiction' : 0,
+            'poetry' : 0,
+            'romance' : 0,
+            'non_fiction' : 0,
+            'history' : 0,
+            'mystery' : 0,
+            'horror_thriller' : 0,
+            'young_adult' : 0,
+            'childrens_literature' : 0,
+            'other' : 0
+        }
     for genre in current_year_dict:
         relative_genre = current_year_dict[genre] / count_yearly
         yearly_relative_dict[year][genre] = relative_genre
 print(yearly_relative_dict)
 
 # Writing to CSV file (relative files)
-with open('american_yearly_genres_relative.csv', 'w', encoding = 'utf-8') as file:
-    file.write('year, fantasy, science_fiction, poetry, childrens_literature, scary, non_fiction, romance, history, young_adult \n')
+with open('global_yearly_genres_relative.csv', 'w', encoding = 'utf-8') as file:
+    file.write('year, fantasy, science_fiction, poetry, romance, non_fiction, history, mystery, horror_thriller, young_adult, childrens_literature \n')
     for year in yearly_relative_dict:
-        file.write(f"{year}, {yearly_relative_dict[year]['fantasy']}, {yearly_relative_dict[year]['science_fiction']}, {yearly_relative_dict[year]['poetry']}, {yearly_relative_dict[year]['childrens_literature']}, {yearly_relative_dict[year]['scary']}, {yearly_relative_dict[year]['non_fiction']}, {yearly_relative_dict[year]['romance']}, {yearly_relative_dict[year]['history']}, {yearly_relative_dict[year]['young_adult']} \n")
+        file.write(f'{year}, {yearly_relative_dict[year]["fantasy"]}, {yearly_relative_dict[year]["science_fiction"]}, {yearly_relative_dict[year]["poetry"]}, {yearly_relative_dict[year]["romance"]}, {yearly_relative_dict[year]["non_fiction"]}, {yearly_relative_dict[year]["history"]}, {yearly_relative_dict[year]["mystery"]}, {yearly_relative_dict[year]["horror_thriller"]}, {yearly_relative_dict[year]["young_adult"]}, {yearly_relative_dict[year]["childrens_literature"]} \n')
