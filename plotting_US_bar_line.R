@@ -8,22 +8,22 @@ category <- function(year) {
   if (year <= 1914){
     return("Political reform")
   } else if (year <= 1933) {
-    return("War, prosperity and the Great Depression") 
+    return("War and the Great Depression") 
   } else if(year <=1945) {
-    return("New Deal and World War II")
+    return("New Deal and WWII")
   } else if(year <=1960){
     return("Postwar America")
   } else if(year <=1980){
     return("Civil unrest and social reforms")
   } else if(year<=2000){
-    return("End of the century")
+    return("End of century")
   } else {
     return("no info")
   }
 }
 
 # Generation grouping + Pivot longer for relative and absolute
-US_period_absolute <- pivot_longer(american_data, c("fantasy", "poetry", "science_fiction", "romance"), names_to = "genre")
+US_period_absolute <- pivot_longer(american_data, c("fantasy", "poetry", "science_fiction", "romance"), names_to = "genre", values_to = "absolute_occurrence")
 
 US_period_relative <- american_data |>
   mutate(period = sapply(year, category)) |>
@@ -37,37 +37,39 @@ US_period_relative <- american_data |>
 # # Visualization: bar plot for relative occurrence
 ggplot(data = US_period_relative) +
   aes(x = period, y = relative_frequency, fill = genre)+
-  labs(title = "Relative genre occurrence by period in US history the author was born in",
+  labs(title = "Relative genre occurrence",
+      subtitle = "By period in US history the author was born in",
       x = "Period in US history",
       y = "Average occurrence", 
       fill = "Genre") +
   scale_fill_discrete(labels = c("Fantasy", "Poetry", "Romance", "Science fiction")) +
-  scale_x_discrete(limits = c("Political reform", "War, prosperity and the Great Depression", "New Deal and World War II", "Postwar America", "Civil unrest and social reforms", "End of the century"), 
-    labels = c("Political reform\n(1900-1914)", "War, prosperity and\n the Great Depression\n(1914-1933)", "New Deal and\n World War II\n(1933-1945)", "Postwar America\n(1945-1960)", "Civil unrest and\n social reform\n(1960-1980)", "End of the century\n(1980-2000)")) +          
-  theme_light() +
+  scale_x_discrete(limits = c("Political reform", "War and the Great Depression", "New Deal and WWII", "Postwar America", "Civil unrest and social reforms", "End of century"), 
+    labels = c("Political reform\n(1900-1914)", "War and the \n Great Depression\n(1914-1933)", "New Deal\nand WWII\n(1933-1945)", "Postwar America\n(1945-1960)", "Civil unrest and\n social reform\n(1960-1980)", "End of century\n(1980-2000)")) +          
+  theme_light(base_size = 14) +
   geom_col(width = 0.6, position = "dodge", colour = "black")
-ggsave("Relative US occurrence of genre per generation.pdf", width = 10, height = 6)
+ggsave("US relative occurrence of genre per generation bar plot.pdf", width = 10, height = 5)
 
 # Visualization: line plot for absolute occurrence 
 ggplot(data = US_period_absolute) +
-  aes(x = year, y = value, color = genre) +
-  labs(title = "Absolute genre occurrence by period in US history the author was born in",
+  aes(x = year, y = absolute_occurrence, color = genre) +
+  labs(title = "Absolute genre occurrence",
+      subtitle = "By period in US history the author was born in",
       x = "Author year of birth", 
       y = "Absolute occurrence", 
       color = "Genre") +
-  theme_light() +
+  theme_light(base_size = 17) +
   scale_colour_discrete(labels = c("Fantasy", "Poetry", "Romance", "Science fiction")) +
   geom_vline(xintercept = 1914, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1933, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1945, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1960, linetype = "dashed", color = 'grey50') +
   geom_vline(xintercept = 1980, linetype = "dashed", color = 'grey50') +
-  annotate("text", size = 3.5, x = 1907, y = 7, label = "Political reform\n(1900-1914)") +
-  annotate("text", size = 3.5, x = 1923.5, y = 7, label = "War, prosperity\n and the Great\n Depression (1914-1933)") +
-  annotate("text", size = 3.5, x = 1939, y = 7, label = "New Deal and\n World War II\n(1933-1945)") +
-  annotate("text", size = 3.5, x = 1952, y = 7, label = "Postwar America\n(1945-1960)") +
-  annotate("text", size = 3.5, x = 1970, y = 7, label = "Civil unrest\n and social reform\n(1960-1980)") +
-  annotate("text", size = 3.5, x = 1989, y = 7, label = "End of\n the century\n(1980-2000)") +
+  annotate("text", size = 4.5, x = 1905, y = 9, label = "Political reform\n(1900-1914)") +
+  annotate("text", size = 4.5, x = 1923.5, y = 9, label = "War and the\nGreat Depression\n(1914-1933)") +
+  annotate("text", size = 4.5, x = 1939, y = 9, label = "New Deal\nand WWII\n(1933-1945)") +
+  annotate("text", size = 4.5, x = 1952, y = 9, label = "Postwar\nAmerica\n(1945-1960)") +
+  annotate("text", size = 4.5, x = 1970, y = 9, label = "Civil unrest\n and social reform\n(1960-1980)") +
+  annotate("text", size = 4.5, x = 1989, y = 9, label = "End of\n century\n(1980-2000)") +
   geom_point(alpha = 0.3) +
   geom_smooth(method='lm', se = FALSE)
-ggsave("Absolute occurrence by genre by gen.pdf", width = 12, height = 6)
+ggsave("US Absolute occurrence by genre by gen line plot.pdf", width = 12, height = 7)
