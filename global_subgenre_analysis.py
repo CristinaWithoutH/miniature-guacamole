@@ -10,8 +10,8 @@ from collections import Counter
 writers_dict = {}           # writersdict will be a dictionary with key: Name, value: dict(Year, Genre)   
 observations_count = 0      # count how many observations including
 duplicates = 0              # duplicate people because each person is counted for each of their genres
-genre_category = "horror"  # define category one at a time here (rather than looping through all to save loading time)
-# categories: science fiction, fantasy, childrens, ya, horror/thriller
+genre_category = "fantasy"  # define category one at a time here (rather than looping through all to save loading time)
+# categories: science fiction, fantasy, childrens, young adult
 
 # 2. letter loop to go through all files
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -90,7 +90,7 @@ for letter in letters:
                 if 1900 <= birth_year <= 2000:                     # filter for 20th century authors
                     if type(genre) is list:                        # if the writer has several genres, add once for each
                         for one_genre in genre:
-                            if genre_category in one_genre.lower() or "thriller" in one_genre.lower():  # include only subgenres of the current category
+                            if genre_category in one_genre.lower():  # include only subgenres of the current category
                                 writers_dict[f"{name} {one_genre}"] = { 
                                     "birth_year": birth_year,      
                                     "genre": one_genre 
@@ -98,7 +98,7 @@ for letter in letters:
                             observations_count += 1
                             duplicates += 1                   # count duplicates if including the writer multiple times (overcounting each writer by 1)
                     else:                                     # if the writer has 1 genre, add only once
-                        if genre_category in genre.lower() or "thriller" in genre.lower():
+                        if genre_category in genre.lower():
                             writers_dict[name] = {
                                 "birth_year": birth_year,      
                                 "genre": genre  

@@ -24,8 +24,6 @@ def parse_genre(genre_label):
         return "childrens_literature"
     elif "young-adult" in genre or "adolenscence" in genre or "young_adult" in genre or "young adult" in genre:
         return "young_adult"
-    elif "horror" in genre or "thriller" in genre:
-        return "horror_thriller"
     else:
         return "other"
     
